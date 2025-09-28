@@ -98,7 +98,7 @@ export async function completeWorkoutDay(): Promise<UserData> {
   const updatedData: UserData = {
     ...currentData,
     cycleIndex: newIndex,
-  };
+  } as UserData;
 
   await saveUserData(updatedData);
   return updatedData;
