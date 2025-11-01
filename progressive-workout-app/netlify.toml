@@ -1,0 +1,13 @@
+# This is the configuration file for Netlify
+
+[build]
+  # This tells Netlify where your project's package.json is located.
+  # All commands will be run from this directory.
+  base = "progressive-workout-app"
+
+  # This is the command Netlify will run to build your site.
+  command = "npm run build"
+
+  # This is the directory that contains the built site.
+  # Netlify's Next.js plugin will automatically detect this and set up everything correctly.
+  publish = ".next"
