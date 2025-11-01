@@ -50,7 +50,7 @@ export default function HomePage() {
       
       <div className="w-full max-w-md bg-gray-800 rounded-xl shadow-lg p-8">
         <h1 className="text-2xl font-semibold text-gray-400 mb-2">
-          Today's Session
+          Today&apos;s Session
         </h1>
         
         <p className={`text-5xl font-bold mb-6 ${isRestDay ? 'text-green-400' : 'text-blue-400'}`}>

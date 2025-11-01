@@ -61,7 +61,7 @@ export default function WorkoutPage() {
         onClick={() => setIsLogging(true)}
         className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg text-lg"
       >
-        Log Today's Workout
+        Log Today&apos;s Workout
       </button>
 
       <WorkoutHistory logs={userLogs} />

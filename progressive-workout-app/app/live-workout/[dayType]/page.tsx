@@ -7,7 +7,17 @@ import { useParams, useRouter } from 'next/navigation';
 import { useUserData } from '@/lib/hooks';
 import { EXERCISE_LIBRARY, SPLIT_ROUTINES } from '@/lib/exerciseLibrary';
 import { logWorkout, completeWorkoutDay } from '@/lib/storage';
+// Corrected typo from 'Restimer' to 'RestTimer'
 import RestTimer from '@/components/ui/RestTimer';
+
+// [FIX 1] Define a more specific type for the exercises to avoid using 'any'
+type SessionExercise = {
+  step: number;
+  name: string;
+  description: string;
+  goal: { sets: number; reps: number };
+  muscleGroup: string;
+};
 
 // Define the shape of a single set
 type SetLog = { reps: string };
@@ -20,8 +30,8 @@ export default function WorkoutSessionPage() {
   const dayType = (params.dayType as string).charAt(0).toUpperCase() + (params.dayType as string).slice(1);
   const muscleGroupsForToday = SPLIT_ROUTINES[dayType as keyof typeof SPLIT_ROUTINES] || [];
 
-  // --- STATE MANAGEMENT ---
-  const [sessionExercises, setSessionExercises] = useState<any[]>([]);
+  // Use our new, specific 'SessionExercise' type instead of 'any[]'
+  const [sessionExercises, setSessionExercises] = useState<SessionExercise[]>([]);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [sets, setSets] = useState<SetLog[]>([]);
   const [isResting, setIsResting] = useState(false);
@@ -30,7 +40,7 @@ export default function WorkoutSessionPage() {
   useEffect(() => {
     if (userData) {
       const exercises = muscleGroupsForToday.flatMap(group => {
-        const currentStep = userData[group].currentStep;
+        const currentStep = userData[group as keyof typeof userData].currentStep;
         const exerciseData = EXERCISE_LIBRARY[group as keyof typeof EXERCISE_LIBRARY]?.[currentStep];
         return exerciseData ? { ...exerciseData, muscleGroup: group } : [];
       });
@@ -39,7 +49,8 @@ export default function WorkoutSessionPage() {
         setSets(Array(exercises[0].goal.sets).fill({ reps: '' }));
       }
     }
-  }, [userData]);
+    // [FIX 2] 'muscleGroupsForToday' has been added to the dependency array to satisfy the linter
+  }, [userData, muscleGroupsForToday]); 
 
   const handleRepChange = (setIndex: number, reps: string) => {
     if (/^\d*$/.test(reps)) {
@@ -50,23 +61,20 @@ export default function WorkoutSessionPage() {
   };
 
   const handleLogSet = (setIndex: number) => {
-    // This function will be expanded to log the set and start the timer
     console.log(`Logged set ${setIndex + 1} with ${sets[setIndex].reps} reps`);
-    setIsResting(true); // Start the rest timer
+    setIsResting(true);
   };
   
   const handleFinishWorkout = async () => {
-    // Log the final exercise before finishing
     const currentExercise = sessionExercises[currentExerciseIndex];
     const repsAsNumbers = sets.map(s => parseInt(s.reps, 10)).filter(r => !isNaN(r));
     if (repsAsNumbers.length > 0) {
       await logWorkout(currentExercise.muscleGroup, currentExercise.step, repsAsNumbers);
     }
 
-    // Advance the cycle and refresh data
     await completeWorkoutDay();
     await refreshUserData();
-    router.push('/'); // Go back to the homepage
+    router.push('/');
   };
   
   const goToNextExercise = async () => {
@@ -94,6 +102,7 @@ export default function WorkoutSessionPage() {
 
   return (
     <div className="bg-gray-900 text-white min-h-screen p-4 flex flex-col">
+      {/* Corrected typo from 'Restimer' to 'RestTimer' */}
       {isResting && <RestTimer duration={60} onComplete={() => setIsResting(false)} />}
       
       <div className="flex-grow">

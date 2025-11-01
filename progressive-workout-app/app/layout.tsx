@@ -1,6 +1,5 @@
-"use client"; // Because our provider needs to be in a client component tree
+"use client";
 
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { UserDataProvider } from "@/lib/hooks";
@@ -15,9 +14,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// We can remove the 'export const metadata' as it's better handled
-// in a server component layout, but for simplicity here it's okay.
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,13 +23,11 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        {/* Basic viewport meta tag is important for PWA responsiveness */}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* We wrap the entire application's children with the provider */}
         <UserDataProvider>
           {children}
         </UserDataProvider>
