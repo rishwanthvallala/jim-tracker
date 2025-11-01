@@ -1,8 +1,0 @@
-# The final, correct Netlify configuration
-
-[build]
-  # This is the command to build the Next.js site.
-  command = "npm run build"
-
-  # This is the folder that contains the built site.
-  publish = ".next"
